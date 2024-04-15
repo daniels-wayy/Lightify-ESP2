@@ -26,7 +26,7 @@ void workflowTicker()
 
 void checkWorkflowStart() {
     // if already performing then do nothing
-    if (workflowPowerOnTmr.isRunning() || workflowPowerOffTmr.isRunning()) {
+    if (isWorkflowRunning()) {
         return;
     }
     
@@ -106,7 +106,7 @@ void checkWorkflowStart() {
 void checkWorkflowTimers()
 {
     // if "dawn" or "sunset" is in progress
-    if (workflowPowerOnTmr.isRunning() || workflowPowerOffTmr.isRunning())
+    if (isWorkflowRunning())
     {
         // if has active workflow and is ticked
         if (activeWorkflow != nullptr && workflowTickerTmr.period())
@@ -165,12 +165,9 @@ void checkWorkflowTimers()
 
 void stopWorkflowProcess()
 {
-    if (workflowPowerOnTmr.isRunning() || workflowPowerOffTmr.isRunning())
-    {
-        workflowTickerTmr.stop();
-        workflowPowerOnTmr.stop();
-        workflowPowerOffTmr.stop();
-    }
+    workflowTickerTmr.stop();
+    workflowPowerOnTmr.stop();
+    workflowPowerOffTmr.stop();
 }
 
 // checks if it's time to perform workflow item
@@ -208,4 +205,8 @@ Workflow *isWorkflow()
     }
 
     return nullptr;
+}
+
+bool isWorkflowRunning() {
+    return workflowPowerOnTmr.isRunning() || workflowPowerOffTmr.isRunning();
 }

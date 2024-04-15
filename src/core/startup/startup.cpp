@@ -11,18 +11,15 @@ void startSerial()
 
 void attachPortal()
 {
-    if (USE_PORTAL)
-    {
-        portal.attachBuild(buildWebInterface);
-        portal.attach(checkPortal);
-    }
+    portal.attachBuild(buildWebInterface);
+    portal.attach(checkPortal);
 }
 
 void startButton()
 {
-    if (DEVICE_CONFIG.useBtn)
+    if (cfg.useBtn)
     {
-        btn.setLevel(digitalRead(DEVICE_CONFIG.btnPin));
+        btn.setLevel(digitalRead(cfg.btnPin));
     }
 }
 
@@ -39,13 +36,13 @@ void startWiFi()
     while (WiFi.status() != WL_CONNECTED)
     {
         effects.loadingEffect(CRGB::Green);
-        if (DEVICE_CONFIG.useBtn)
+        if (cfg.useBtn)
         {
             btn.tick();
         }
 
         // if button is tapped or connection to router is timed out
-        if ((DEVICE_CONFIG.useBtn && btn.isClick()) || connectionTimer.period())
+        if ((cfg.useBtn && btn.isClick()) || connectionTimer.period())
         {
             WiFi.disconnect();    // disconnect
             startLocalPortal(ip); // open portal

@@ -67,18 +67,18 @@ void buildWebInterface()
 
 void startLocalPortal(IPAddress ip)
 {
-  DEBUG("Create AP: ");
-  DEBUGLN(DEVICE_CONFIG.apName);
+  DEBUG(F("Create AP: "));
+  DEBUGLN(cfg.apName);
 
   WiFi.mode(WIFI_AP);
-  WiFi.softAP(DEVICE_CONFIG.apName, DEVICE_CONFIG.apPass);
+  WiFi.softAP(cfg.apName, cfg.apPass);
 
   portal.start(); // launch portal
 
   while (portal.tick())
   {
     effects.loadingEffect(CRGB::Blue);
-    if (DEVICE_CONFIG.useBtn)
+    if (cfg.useBtn)
     {
       btn.tick();
       // if button is clicked -> restart ESP

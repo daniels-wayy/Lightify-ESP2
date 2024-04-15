@@ -26,6 +26,7 @@
 #include "core/time/time_setup.h"
 #include "core/time/time_ticker.h"
 #include "core/workflow/workflow.h"
+#include "core/button/button_ticker.h"
 
 bool EECfgFlag, EEWorkflowsFlag, EEFxFlag, fxPropertyChanged;
 bool isTimeReady = false, gotTime = false;
@@ -86,12 +87,13 @@ void loop()
     return;
   }
   timeTicker();
+  mqttTick();
   workflowTicker();
   checkWorkflowTimers();
-  EE_ticker();
   ledTick();
   effectsTicker();
-  mqttTick();   
+  buttonTicker();
   portal.tick();
   checkPortal();
+  EE_ticker();
 }

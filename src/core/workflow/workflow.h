@@ -29,3 +29,4 @@ void stopWorkflowProcess();
 void checkWorkflowStart();
 
 Workflow* isWorkflow();
+bool isWorkflowRunning();

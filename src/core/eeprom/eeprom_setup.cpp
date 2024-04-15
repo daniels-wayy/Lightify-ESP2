@@ -19,7 +19,7 @@ void EE_setup() {
         cfg.ledCount = MAX_LEDS;
     }
 
-    DEBUGLN("EEPROM setup completed!");
+    DEBUGLN(F("EEPROM setup completed!"));
 }
 
 void EE_erase() {
@@ -29,5 +29,5 @@ void EE_erase() {
     EEPROM.write(0, 0);
     EEPROM.commit();
 
-    DEBUGLN("EEPROM erase completed!");
+    DEBUGLN(F("EEPROM erase completed!"));
 }
