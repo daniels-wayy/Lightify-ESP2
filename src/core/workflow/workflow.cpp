@@ -36,13 +36,18 @@ void checkWorkflowStart() {
     if (currentWorkflow != nullptr) {
 
         // is "dawn" && is turned off && "sunset" is not in progress
-        if (cfg.brightness < currentWorkflow->brightness /*currentWorkflow->isPowerOn*/ /*&& !cfg.power*/ && !workflowPowerOffTmr.isRunning()) {
+        if (cfg.brightness <= currentWorkflow->brightness && !workflowPowerOffTmr.isRunning()) {
             // check if no duration for action
             if (currentWorkflow->duration <= 0) {
                 cfg.power = true;
                 cfg.brightness = currentWorkflow->brightness;
                 EE_updateCfg();
                 return;
+            }
+
+            // if same brightness set -> consider as "dawn" so set brightness to 0
+            if (cfg.brightness == currentWorkflow->brightness) {
+                cfg.brightness = 0;
             }
 
             // set active workflow
@@ -69,7 +74,7 @@ void checkWorkflowStart() {
         } 
 
         // is "sunset" && is turned on && "dawn" is not in progress
-        if (cfg.brightness > currentWorkflow->brightness /*!currentWorkflow->isPowerOn*/ && cfg.power && !workflowPowerOnTmr.isRunning()) {
+        else if (cfg.brightness > currentWorkflow->brightness && !workflowPowerOnTmr.isRunning()) {
             // check if no duration for action
             if (currentWorkflow->duration <= 0) {
                 cfg.brightness = currentWorkflow->brightness;
@@ -173,7 +178,7 @@ void stopWorkflowProcess()
 // checks if it's time to perform workflow item
 Workflow *isWorkflow()
 {
-    for (uint8_t i = 0; i < MAX_WORKFLOWS; i++)
+    for (uint8_t i = 0; i < cfg.workflowsCount; i++)
     {
         // workflow has id and is enabled
         if (workflows[i].id > 0 && workflows[i].isEnabled)

@@ -2,7 +2,7 @@
 
 #include "device_type.h"
 
-#define LY_VERSION 2.0 // firmware version
+#define LY_VERSION 2.1 // firmware version
 
 constexpr auto DEVICE_TYPE = living_room_tv;
 constexpr auto DEVICE_CONFIG = getConfig(DEVICE_TYPE);
