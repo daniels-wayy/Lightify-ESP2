@@ -1,30 +1,24 @@
 #include "startup.h"
 
-void startSerial()
-{
-    if (USE_SERIAL)
-    {
+void startSerial() {
+    if (USE_SERIAL) {
         Serial.begin(SERIAL_BAUD);
         DEBUGLN();
     }
 }
 
-void attachPortal()
-{
+void attachPortal() {
     portal.attachBuild(buildWebInterface);
     portal.attach(checkPortal);
 }
 
-void startButton()
-{
-    if (cfg.useBtn)
-    {
+void startButton() {
+    if (cfg.useBtn) {
         btn.setLevel(digitalRead(cfg.btnPin));
     }
 }
 
-void startWiFi()
-{
+void startWiFi() {
     auto ip = IPAddress(cfg.ip[0], cfg.ip[1], cfg.ip[2], cfg.ip[3]);
 
     DEBUGLN(F("Connecting..."));
@@ -33,17 +27,13 @@ void startWiFi()
     WiFi.begin(cfg.ssid, cfg.pass);
 
     Timer connectionTimer(WIFI_TOUT);
-    while (WiFi.status() != WL_CONNECTED)
-    {
+    while (WiFi.status() != WL_CONNECTED) {
         effects.loadingEffect(CRGB::Green);
-        if (cfg.useBtn)
-        {
+        if (cfg.useBtn) {
             btn.tick();
         }
-
         // if button is tapped or connection to router is timed out
-        if ((cfg.useBtn && btn.isClick()) || connectionTimer.period())
-        {
+        if ((cfg.useBtn && btn.isClick()) || connectionTimer.period()) {
             WiFi.disconnect();    // disconnect
             startLocalPortal(ip); // open portal
         }
@@ -58,8 +48,7 @@ void startWiFi()
     DEBUGLN(localIP);
 
     // store success IP to EEPROM
-    if (ip != localIP)
-    {
+    if (ip != localIP) {
         ip = localIP;
         for (int i = 0; i < 4; i++) {
             cfg.ip[i] = ip[i];
@@ -68,16 +57,25 @@ void startWiFi()
     }
 }
 
-void startMQTT()
-{
+void startMQTT() {
     mqtt.setServerData();
     mqtt.getClient()->setCallback(mqttCallback);
+    mqtt.setEECfgUpdate(EE_updateCfg);
+    mqtt.setEECfgUpdateRst(EE_updateCfgRst);
+    mqtt.setEEWorkflowsUpdate(EE_updateWorkflows);
+    mqtt.setEEFxUpdate(EE_updateEffects);
+    mqtt.setOnPowerChange(onMqttPowerChanged);
+    mqtt.setOnBrightnessChange(onMqttBrightnessChanged);
 }
 
-void startPortal()
-{
-    if (USE_PORTAL)
-    {
+void startPortal() {
+    if (USE_PORTAL) {
         portal.start();
     }
+}
+
+void setupOTA() {
+    otaUpdater.setOnFirmwareUpdateStarted(onFirmwareUpdateStarted);
+    otaUpdater.setOnFirmwareUpdateProgress(onFirmwareUpdateProgress);
+    otaUpdater.setOnFirmwareUpdateFinished(onFirmwareUpdateFinished);
 }

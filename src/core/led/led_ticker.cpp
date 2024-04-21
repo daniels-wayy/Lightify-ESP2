@@ -1,12 +1,9 @@
 #include "led_ticker.h"
 
 void ledTick() {
-    // if effect is applied -> return
-    if (cfg.fxIndex > 0) {
-        return;
-    }
+    if (cfg.fxIndex > 0) return;
 
-    static Timer refreshTimer(30);
+    static Timer refreshTimer(40);
 
     if (refreshTimer.period()) {
         CRGB ncol = cfg.currentColor();

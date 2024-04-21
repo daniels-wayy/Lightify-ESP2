@@ -20,7 +20,7 @@ struct Config
     bool useBtn = DEVICE_CONFIG.useBtn;
     bool power = 1;
     uint8_t brightness = 50;
-    uint8_t colorHue = 127;
+    uint8_t colorHue = 64;
     uint8_t colorSaturation = 255;
     uint8_t colorValue = 255;
     uint8_t fxIndex = 0;
@@ -40,7 +40,7 @@ struct Config
     }
 };
 
-#define MODE_AMOUNT 8
+#define MODE_AMOUNT 4
 struct ModeType
 {
     uint8_t Speed = 4;
@@ -51,7 +51,6 @@ struct ModeType
 struct Workflow
 {
     bool isEnabled = false;
-    bool isPowerOn = false;     // if the device must power on
     uint8_t id = 0;         // id will be <day + hour + minute + duration>
     uint8_t day = 0;
     uint8_t hour = 0;

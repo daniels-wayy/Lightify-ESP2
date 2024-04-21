@@ -9,7 +9,7 @@
 class OTAUpdater
 {
 public:
-    OTAUpdater(LedService &strip);
+    OTAUpdater();
     void update(
         char* url,
         std::function<void()> onStart,
@@ -17,6 +17,12 @@ public:
         std::function<void()> onFinished,
         std::function<void(const char*)> onError
     );
+    void setOnFirmwareUpdateStarted(void (*callback)()) { _onFirmwareUpdateStarted = callback; }
+    void setOnFirmwareUpdateProgress(void (*callback)(uint8_t)) { _onFirmwareUpdateProgress = callback; }
+    void setOnFirmwareUpdateFinished(void (*callback)(bool)) { _onFirmwareUpdateFinished = callback; }
 private:
-    LedService *_strip;
+    bool _isUpdating = false;
+    void (*_onFirmwareUpdateStarted)() = nullptr;
+    void (*_onFirmwareUpdateProgress)(uint8_t) = nullptr;
+    void (*_onFirmwareUpdateFinished)(bool) = nullptr;
 };

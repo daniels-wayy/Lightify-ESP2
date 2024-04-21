@@ -10,7 +10,6 @@
 #include "led.h"
 #include "device_type.h"
 #include "misc/utils.h"
-#include "core/mqtt/mqtt_helpers.h"
 #include "core/eeprom/eeprom_ticker.h"
 #include "core/workflow/workflow.h"
 
