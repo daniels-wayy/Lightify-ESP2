@@ -7,16 +7,12 @@
 #include "data.h"
 #include "config.h"
 
-#define LAVA_INDEX 1
-#define CLOUDS_INDEX 2
-#define FOREST_INDEX 3
-#define OCEAN_INDEX 4
-#define SPARKLES_INDEX 5
-#define RAINBOW_INDEX 6
-#define FIRE_ONE_INDEX 7
+#define SPARKLES_INDEX 1
+#define RAINBOW_INDEX 2
+#define FIRE_INDEX 3
 
 // Sparkles fx
-#define SPARKLES_COLOR CRGB::LightGoldenrodYellow
+#define SPARKLES_COLOR CRGB::White
 
 // Fire fx
 #define MIN_SAT 245
@@ -26,15 +22,10 @@
 #define FIRE_STEP 15
 #define HUE_START 0
 
-class LedEffects
-{
+class LedEffects {
 public:
-    LedEffects(LedService &strip, Config &cfg, bool &fxPropertyChanged);
+    LedEffects(LedService &strip, Config &cfg);
     void loadingEffect(CRGB color);
-    void lavaNoise(uint8_t scale, uint8_t speed);
-    void cloudsNoise(uint8_t scale, uint8_t speed);
-    void forestNoise(uint8_t scale, uint8_t speed);
-    void oceanNoise(uint8_t scale, uint8_t speed);
     void sparkles(uint8_t scale);
     void rainbow(uint8_t scale);
     void fire(uint8_t scale);
@@ -43,8 +34,5 @@ public:
 private:
     LedService *_strip;
     Config* _cfg;
-    bool& _fxPropertyChanged;
-
-    void _fillNoiseLED();
     CHSV _getFireColor(int val);
 };

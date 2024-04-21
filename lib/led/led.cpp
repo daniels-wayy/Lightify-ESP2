@@ -1,13 +1,11 @@
 #include "led.h"
 
-LedService::LedService(Config &cfg) : _cfg(&cfg)
-{
-    _leds = new CRGB[cfg.ledCount];
-}
+LedService::LedService(Config &cfg) : _cfg(&cfg) {}
 
-void LedService::initialize()
-{
-    FastLED.addLeds<WS2812, DEVICE_CONFIG.ledPin, GRB>(_leds, _cfg->ledCount).setCorrection(TypicalLEDStrip);
+void LedService::initialize() {
+    _leds = new CRGB[_cfg->ledCount];
+    delay(50);
+    FastLED.addLeds<WS2812B, DEVICE_CONFIG.ledPin, GRB>(_leds, _cfg->ledCount).setCorrection(TypicalLEDStrip);
     if (_cfg->stripCurrent > 0) {
         FastLED.setMaxPowerInVoltsAndMilliamps(STRIP_VOLT, _cfg->stripCurrent);
     }
@@ -22,6 +20,10 @@ void LedService::setBrightness(uint8_t value) {
 
 uint8_t LedService::getBrightness() {
     return FastLED.getBrightness();
+}
+
+bool LedService::isOff() {
+    return getBrightness() == 0;
 }
 
 void LedService::update() {

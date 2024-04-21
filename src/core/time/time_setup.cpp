@@ -5,7 +5,7 @@ void setupTime() {
   ntp.setTimeOffset((cfg.GMT) * 3600l);
   ntp.setPoolServerName(NTPserver);
   if (WiFi.status() == WL_CONNECTED) { 
-    DEBUG("NTP Setup. Time zone: ");
+    DEBUG(F("NTP Setup. Time zone: "));
     DEBUGLN(cfg.GMT);
     ntp.begin();
     if (ntp.update()) isTimeReady = true;

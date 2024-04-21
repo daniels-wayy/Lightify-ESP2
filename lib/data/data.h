@@ -2,9 +2,9 @@
 
 #include "device_type.h"
 
-#define LY_VERSION 2.1 // firmware version
+#define LY_VERSION 2.2 // firmware version
 
-constexpr auto DEVICE_TYPE = living_room_tv;
+constexpr auto DEVICE_TYPE = debug;
 constexpr auto DEVICE_CONFIG = getConfig(DEVICE_TYPE);
 
 // *** SERIAL ***
@@ -19,10 +19,6 @@ constexpr auto DEVICE_CONFIG = getConfig(DEVICE_TYPE);
 #define STRIP_VOLT 5
 #define MAX_LOAD_ANIM_BRI 80 // strip - animation loading effect pulse max brightness
 #define MIN_LOAD_ANIM_BRI 20 // strip - animation loading effect pulse min brightness
-
-// *** FX ***
-#define EFFECTS_MAX_SPEED 40
-#define EFFECTS_MIN_SPEED 1
 
 // *** WORKFLOWS ***
 #define WORKFLOW_UPDATE_FREQ 1500 // timer frequency to change power state set in schedule, sec

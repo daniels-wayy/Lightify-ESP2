@@ -1,7 +1,6 @@
 #include "mqtt_callback.h"
 
-void mqttCallback(char *topic, byte *payload, uint16_t len)
-{
+void mqttCallback(char *topic, byte *payload, uint16_t len) {
     payload[len] = '\0';
     char *str = (char *)payload;
 
@@ -10,12 +9,5 @@ void mqttCallback(char *topic, byte *payload, uint16_t len)
         return;
 
     str += hLen; // header shift
-
-    mqtt.onPacketReceived(
-        str, 
-        EE_updateCfg, 
-        EE_updateCfgRst, 
-        EE_updateWorkflows, 
-        EE_updateEffects, 
-        stopWorkflowProcess);
+    mqtt.onPacketReceived(str);
 }

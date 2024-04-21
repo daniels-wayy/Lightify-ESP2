@@ -18,7 +18,7 @@
 #include "misc/utils.h"
 #include "core/startup/startup.h"
 #include "core/portal/portal_s.h"
-#include "core/mqtt/mqtt_helpers.h"
+#include "core/mqtt/mqtt_ticker.h"
 #include "core/led/led_ticker.h"
 #include "core/effects/effects_ticker.h"
 #include "core/eeprom/eeprom_ticker.h"
@@ -27,39 +27,35 @@
 #include "core/time/time_ticker.h"
 #include "core/workflow/workflow.h"
 #include "core/button/button_ticker.h"
+#include "core/ota/ota.h"
 
-bool EECfgFlag, EEWorkflowsFlag, EEFxFlag, fxPropertyChanged;
-bool isTimeReady = false, gotTime = false;
-Timer EETimer(EE_TOUT, false), workflowTickerTmr(WORKFLOW_UPDATE_FREQ, false), workflowPowerOnTmr, workflowPowerOffTmr;
-uint8_t prevSec = 0, powerOnInitialBrightness = 0, powerOffInitialBrightness = 0;
+Timer EETimer(EE_TOUT, false);
+bool EECfgFlag, EEWorkflowsFlag, EEFxFlag;
+Timer workflowTickerTmr(WORKFLOW_UPDATE_FREQ, false), workflowPowerOnTmr, workflowPowerOffTmr;
+bool isTimeReady;
 
 Config cfg;
 LedService led(cfg);
-LedEffects effects(led, cfg, fxPropertyChanged);
+LedEffects effects(led, cfg);
 Button btn(DEVICE_CONFIG.btnPin);
 GyverPortal portal;
 WiFiClient espClient;
 ModeType modes[MODE_AMOUNT];
 Workflow workflows[MAX_WORKFLOWS];
-Workflow* activeWorkflow;
-WorkflowsService workflowsService(cfg, workflows);
 Time now;
+WorkflowsService workflowsService(cfg, workflows, now);
 WiFiUDP ntpUdp;
 NTPClient ntp(ntpUdp);
-OTAUpdater otaUpdater(led);
+OTAUpdater otaUpdater;
 MQTTService mqtt(
       espClient,
       cfg,
       modes,
       workflowsService,
-      otaUpdater,
-      fxPropertyChanged,
-      workflowPowerOnTmr,
-      workflowPowerOffTmr
+      otaUpdater
 );
 
-void setup()
-{
+void setup() {
   delay(2000);
   startSerial();
 
@@ -74,26 +70,31 @@ void setup()
   startButton();
   startWiFi();
   startMQTT();
+  setupOTA();
   randomSeed(micros());
   startPortal();
   setupTime();
   led.setBrightness(cfg.brightness);
 }
-  
-void loop()
-{
+
+void loop() {
   if (WiFi.status() != WL_CONNECTED) {
     effects.loadingEffect(CRGB::WhiteSmoke);
     return;
   }
   timeTicker();
+  yield();
   mqttTick();
+  yield();
   workflowTicker();
   checkWorkflowTimers();
+  yield();
+  EE_ticker();
   ledTick();
   effectsTicker();
-  buttonTicker();
+  yield();
   portal.tick();
   checkPortal();
-  EE_ticker();
+  buttonTicker();
+  yield();
 }

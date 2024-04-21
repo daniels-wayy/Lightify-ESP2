@@ -11,8 +11,9 @@ enum DeviceType
     living_room_tv,
     living_room_piano,
     kitchen_workspace,
-    office_monitor,
+    office_pc,
     office_desk,
+    office_mac,
     // NK
     kitchen_ceiling,
     // DEBUG
@@ -40,8 +41,9 @@ constexpr DeviceConfig getConfig(DeviceType type) {
         case living_room_tv: return {.localTopic = "DSLY_Livingroom_TV", .ledCount = 78, .useBtn = 1, .apName = "Lightify Livingroom TV"};
         case living_room_piano: return {.localTopic = "DSLY_Livingroom_Piano", .ledCount = 77, .apName = "Lightify Livingroom Piano"};
         case kitchen_workspace: return {.localTopic = "DSLY_Kitchen_Workspace", .ledCount = 156, .apName = "Lightify Kitchen Workspace"};
-        case office_monitor: return {.localTopic = "DSLY_Office_Monitor", .ledCount = 95, .apName = "Lightify Office Monitor"};
+        case office_pc: return {.localTopic = "DSLY_Office_Monitor", .ledCount = 95, .apName = "Lightify Office Monitor"};
         case office_desk: return {.localTopic = "DSLY_Office_Desk", .ledCount = 90, .apName = "Lightify Office Desk"};
+        case office_mac: return {.localTopic = "DSLY_Office_Mac_Monitor", .ledCount = 60, .apName = "Lightify Office Mac Monitor"};
         // NK
         case kitchen_ceiling: return {.localTopic = "DNLY_Kitchen_Ceiling", .ledCount = 141, .apName = "Lightify Kitchen Ceiling"};
         // DEBUG

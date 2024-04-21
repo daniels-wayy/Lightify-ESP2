@@ -1,7 +1,6 @@
 #include "portal_s.h"
 
-void buildWebInterface()
-{
+void buildWebInterface() {
   GP.BUILD_BEGIN(GP_DARK);
   GP.UPDATE("ledL,sw,br,col,fx", 1500);
 
@@ -65,8 +64,7 @@ void buildWebInterface()
   GP.BUILD_END();
 }
 
-void startLocalPortal(IPAddress ip)
-{
+void startLocalPortal(IPAddress ip) {
   DEBUG(F("Create AP: "));
   DEBUGLN(cfg.apName);
 
@@ -75,11 +73,9 @@ void startLocalPortal(IPAddress ip)
 
   portal.start(); // launch portal
 
-  while (portal.tick())
-  {
+  while (portal.tick()) {
     effects.loadingEffect(CRGB::Blue);
-    if (cfg.useBtn)
-    {
+    if (cfg.useBtn) {
       btn.tick();
       // if button is clicked -> restart ESP
       if (btn.isClick())
@@ -88,36 +84,28 @@ void startLocalPortal(IPAddress ip)
   }
 }
 
-void checkPortal()
-{
-  if (portal.click())
-  {
-    if (portal.click("br"))
-    {
+void checkPortal() {
+  if (portal.click()) {
+    if (portal.click("br")) {
       stopWorkflowProcess();
       cfg.brightness = portal.getInt("br");
     }
-    if (portal.click("sw"))
-    {
+    if (portal.click("sw")) {
       stopWorkflowProcess();
       cfg.power = portal.getCheck("sw");
     }
-    if (portal.click("col"))
-    {
+    if (portal.click("col")) {
       cfg.colorHue = portal.getInt("col");
     }
-    if (portal.click("fx"))
-    {
+    if (portal.click("fx")) {
       cfg.fxIndex = portal.getInt("fx");
     }
-    if (portal.click())
-    {
+    if (portal.click()) {
       EE_updateCfg();
     }
   }
 
-  if (portal.update())
-  {
+  if (portal.update()) {
     if (portal.update("ledL"))
       portal.answer(mqtt.isConnected());
     if (portal.update("br"))
@@ -130,10 +118,8 @@ void checkPortal()
       portal.answer(cfg.fxIndex);
   }
 
-  if (portal.form())
-  {
-    if (portal.form("/save"))
-    {
+  if (portal.form()) {
+    if (portal.form("/save")) {
       portal.copyStr("ssid", cfg.ssid);
       portal.copyStr("pass", cfg.pass);
       portal.copyStr("local", cfg.local);
@@ -148,9 +134,8 @@ void checkPortal()
       cfg.ledPin = portal.getInt("stripPin");
       cfg.useBtn = constrain(portal.getInt("useBtn"), 0, 1);
       cfg.btnPin = portal.getInt("btnPin");
-      led.clear();
-      led.update();
-      // yield();
+      FastLED.clear();
+      FastLED.show();
       EE_updateCfgRst();
     }
   }

@@ -1,8 +1,6 @@
 #include "ota_updater.h"
 
-OTAUpdater::OTAUpdater(LedService &strip) : _strip(&strip)
-{
-}
+OTAUpdater::OTAUpdater() {}
 
 void OTAUpdater::update(
     char *url,
@@ -10,25 +8,35 @@ void OTAUpdater::update(
     std::function<void(uint8_t)> onProgress,
     std::function<void()> onFinished,
     std::function<void(const char*)> onError
-)
-{
-    ESPhttpUpdate.onStart(onStart);
-    ESPhttpUpdate.onEnd(onFinished);
-    ESPhttpUpdate.onProgress([onProgress](int current, int total){
+) {
+    if (_isUpdating) return;
+
+    ESPhttpUpdate.onStart([this, onStart]() {
+        if (this->_onFirmwareUpdateStarted) this->_onFirmwareUpdateStarted();
+        this->_isUpdating = true;
+        onStart();
+    });
+
+    ESPhttpUpdate.onEnd([this, onFinished]() {
+        if (this->_onFirmwareUpdateFinished) this->_onFirmwareUpdateFinished(true);
+        this->_isUpdating = false;
+        onFinished();
+    });
+
+    ESPhttpUpdate.onProgress([this, onProgress](int current, int total) {
         static Timer tmr(1000);
         if (tmr.period()) {
             auto percentage = static_cast<uint8_t>((static_cast<double>(current) / total) * 100 + 0.5);
+            if (this->_onFirmwareUpdateProgress) this->_onFirmwareUpdateProgress(percentage);
             onProgress(percentage);
         }
     });
-    ESPhttpUpdate.onError([onError](int errorCode) {
+
+    ESPhttpUpdate.onError([this, onError](int errorCode) {
+        if (this->_onFirmwareUpdateFinished) this->_onFirmwareUpdateFinished(false);
+        this->_isUpdating = false;
         onError(ESPhttpUpdate.getLastErrorString().c_str());
     });
-
-    _strip->clear();
-    _strip->setBrightness(50);
-    _strip->fill(CRGB::Red);
-    _strip->update();
 
     BearSSL::WiFiClientSecure UpdateClient;
 	UpdateClient.setInsecure();
