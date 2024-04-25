@@ -56,5 +56,6 @@ struct Workflow
     uint8_t hour = 0;
     uint8_t minute = 0;
     uint8_t duration = 0;   // "dawn" or "sunset" duration, min
-    uint8_t brightness = 0;   // "dawn" or "sunset" end brightness, 0...255
+    uint8_t brightness = 0;   // "dawn" or "sunset" end brightness, 0...255s
+    Workflow() : isEnabled(false), id(0), day(0), hour(0), minute(0), duration(0), brightness(0) {}
 };

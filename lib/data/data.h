@@ -2,7 +2,7 @@
 
 #include "device_type.h"
 
-#define LY_VERSION 2.2 // firmware version
+#define LY_VERSION 2.3 // firmware version
 
 constexpr auto DEVICE_TYPE = debug;
 constexpr auto DEVICE_CONFIG = getConfig(DEVICE_TYPE);
@@ -45,6 +45,7 @@ const uint8_t hLen = strlen(MQTT_HEADER);
 #define SCL_CMD "SCL"                   // Set device effect scale
 #define WFL_ADD_CMD "WFLDD"             // Add workflow item
 #define WFL_DEL_CMD "WFLEL"             // Remove workflow item
+#define WFL_CLR_CMD "WFLCL"             // Clear workflows
 #define WFL_UPD_CMD "WFLPD"             // Update workflow item
 #define STG_UPD_CMD "STGPD"             // Update device settings
 #define FWR_UPD_CMD "FWRPD"             // Update device firmware

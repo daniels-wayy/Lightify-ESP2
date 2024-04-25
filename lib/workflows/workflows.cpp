@@ -57,6 +57,13 @@ void WorkflowsService::del(uint8_t id) {
     }
 }
 
+void WorkflowsService::clear() {
+    for (int i = 0; i < MAX_WORKFLOWS; i++) {
+        _workflows[i] = Workflow();
+    }
+    _cfg->workflowsCount = 0;
+}
+
 Workflow *WorkflowsService::getWorkflows() {
     return _workflows;
 }
@@ -66,7 +73,7 @@ bool WorkflowsService::isAbleToAdd() {
 }
 
 Workflow *WorkflowsService::isWorkflow() {
-    for (uint8_t i = 0; i < _cfg->workflowsCount; i++) {
+    for (uint8_t i = 0; i < MAX_WORKFLOWS; i++) {
         // workflow has id and is enabled
         if (_workflows[i].id > 0 && _workflows[i].isEnabled) {
             if (

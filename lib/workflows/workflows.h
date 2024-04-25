@@ -32,6 +32,7 @@ public:
         uint8_t brightness); 
 
     void del(uint8_t id);    
+    void clear();    
 
     bool isAbleToAdd();    
     Workflow* getWorkflows();
