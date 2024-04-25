@@ -65,6 +65,7 @@ private:
     void _onRequestedWorkflowAdd();
     void _onRequestedWorkflowUpdate();
     void _onRequestedWorkflowDelete();
+    void _onRequestedWorkflowsClear();
     void _onRequestedSettingsUpdate();
     void _onRequestedCurrentState();
     void _onRequestedWorkflowsState();

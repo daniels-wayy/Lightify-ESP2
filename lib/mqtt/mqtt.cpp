@@ -77,6 +77,7 @@ void MQTTService::_parsePacket() {
     else if (_inputBuffer.startsWith(WFL_ADD_CMD)) { _onRequestedWorkflowAdd(); }
     else if (_inputBuffer.startsWith(WFL_UPD_CMD)) { _onRequestedWorkflowUpdate(); }
     else if (_inputBuffer.startsWith(WFL_DEL_CMD)) { _onRequestedWorkflowDelete(); }
+    else if (_inputBuffer.startsWith(WFL_CLR_CMD)) { _onRequestedWorkflowsClear(); }
     else if (_inputBuffer.startsWith(STG_UPD_CMD)) { _onRequestedSettingsUpdate(); }
     else if (_inputBuffer.startsWith(FWR_UPD_CMD)) { _onRequestedFirmwareUpdate(); }
 }
@@ -171,6 +172,12 @@ void MQTTService::_onRequestedWorkflowDelete() {
     if (_EEWorkflowsUpdate) _EEWorkflowsUpdate();
 }
 
+void MQTTService::_onRequestedWorkflowsClear() {
+    _workflowsService->clear();
+    if (_EECfgUpdate) _EECfgUpdate();
+    if (_EEWorkflowsUpdate) _EEWorkflowsUpdate();
+}
+
 void MQTTService::_onRequestedSettingsUpdate() {
     uint16_t data[4];
     _inputBuffer.remove(0, 5);
@@ -218,8 +225,9 @@ void MQTTService::_onRequestedWorkflowsState() {
     _outputBuffer += WFL_HEADER;
     _outputBuffer += _cfg->local;
     _outputBuffer += "/";
-    for (uint8_t i = 0; i < _cfg->workflowsCount; i++) {
+    for (uint8_t i = 0; i < MAX_WORKFLOWS; i++) {
         auto _workflow = &_workflowsService->getWorkflows()[i];
+        if (_workflow->id <= 0) continue;
         _outputBuffer += _workflow->id;
         _outputBuffer += ",";
         _outputBuffer += _workflow->isEnabled;
