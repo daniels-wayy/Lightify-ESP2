@@ -1,21 +1,8 @@
 #include "startup.h"
 
-void startSerial() {
-    if (USE_SERIAL) {
-        Serial.begin(SERIAL_BAUD);
-        DEBUGLN();
-    }
-}
-
 void attachPortal() {
-    portal.attachBuild(buildWebInterface);
-    portal.attach(checkPortal);
-}
-
-void startButton() {
-    if (cfg.useBtn) {
-        btn.setLevel(digitalRead(cfg.btnPin));
-    }
+    portal->attachBuild(buildWebInterface);
+    portal->attach(checkPortal);
 }
 
 void startWiFi() {
@@ -29,11 +16,8 @@ void startWiFi() {
     Timer connectionTimer(WIFI_TOUT);
     while (WiFi.status() != WL_CONNECTED) {
         effects.loadingEffect(CRGB::Green);
-        if (cfg.useBtn) {
-            btn.tick();
-        }
-        // if button is tapped or connection to router is timed out
-        if ((cfg.useBtn && btn.isClick()) || connectionTimer.period()) {
+        // if connection to WiFi is timed out
+        if (connectionTimer.period()) {
             WiFi.disconnect();    // disconnect
             startLocalPortal(ip); // open portal
         }
@@ -66,11 +50,14 @@ void startMQTT() {
     mqtt.setEEFxUpdate(EE_updateEffects);
     mqtt.setOnPowerChange(onMqttPowerChanged);
     mqtt.setOnBrightnessChange(onMqttBrightnessChanged);
-}
+    mqtt.setOnFactoryReset(factoryReset);
 
-void startPortal() {
-    if (USE_PORTAL) {
-        portal.start();
+    if (mqtt.connect()) mqtt.subscribe();
+
+    Timer connectionTimer(MQTT_TOUT);
+    while (!mqtt.isConnected()) {
+        effects.loadingEffect(CRGB::DarkRed);
+        if (connectionTimer.period()) break;
     }
 }
 
@@ -78,4 +65,14 @@ void setupOTA() {
     otaUpdater.setOnFirmwareUpdateStarted(onFirmwareUpdateStarted);
     otaUpdater.setOnFirmwareUpdateProgress(onFirmwareUpdateProgress);
     otaUpdater.setOnFirmwareUpdateFinished(onFirmwareUpdateFinished);
+}
+
+void checkPortalStart() {
+    if (cfg.usePortal) {
+        portal->start();
+    }
+    else {
+        delete portal;
+        portal = nullptr;
+    }
 }

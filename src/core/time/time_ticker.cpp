@@ -3,8 +3,7 @@
 void timeTicker()
 {
     static Timer tmr(500);
-    if (tmr.period())
-    {
+    if (tmr.period()) {
         now.sec = ntp.getSeconds();
         now.min = ntp.getMinutes();
         now.hour = ntp.getHours();

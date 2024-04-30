@@ -3,7 +3,6 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
-#include <FastLED.h>
 #include <mString.h>
 #include "config.h"
 #include "timer.h"
@@ -37,6 +36,7 @@ public:
     void setEEFxUpdate(void (*callback)()) { _EEFxUpdate = callback; }
     void setOnPowerChange(void (*callback)(bool)) { _onPowerChange = callback; }
     void setOnBrightnessChange(void (*callback)(uint8_t)) { _onBrightnessChange = callback; }
+    void setOnFactoryReset(void (*callback)()) { _onFactoryReset = callback; }
 
 private:
     PubSubClient _mqtt;
@@ -54,6 +54,7 @@ private:
     void (*_EEFxUpdate)() = nullptr;
     void (*_onPowerChange)(bool) = nullptr;
     void (*_onBrightnessChange)(uint8_t) = nullptr;
+    void (*_onFactoryReset)() = nullptr;
 
     void _parsePacket();
     void _onRequestedPowerChange();
@@ -67,6 +68,7 @@ private:
     void _onRequestedWorkflowDelete();
     void _onRequestedWorkflowsClear();
     void _onRequestedSettingsUpdate();
+    void _onRequestedSettingsReset();
     void _onRequestedCurrentState();
     void _onRequestedWorkflowsState();
     void _onRequestedSettingsState();

@@ -4,9 +4,8 @@ void effectsTicker() {
     if (cfg.fxIndex <= 0 || led.isOff()) return;
 
     if (!cfg.power) {
-        effects.setSmoothBrightness(led.getBrightness(), 0);
-        led.clear();
-        led.update();
+        effects.loopSmoothBrightness(led.getBrightness(), 0);
+        yield();
         return;
     }
 
@@ -28,6 +27,6 @@ void effectsTicker() {
             break;
     }
 
-    effects.setSmoothBrightness(led.getBrightness(), cfg.brightness);
+    smoothBrightness();
     led.update();
 }

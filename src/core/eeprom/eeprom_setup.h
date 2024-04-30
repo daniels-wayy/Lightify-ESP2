@@ -10,6 +10,6 @@ extern bool EECfgFlag;
 extern Config cfg;
 extern Workflow workflows[MAX_WORKFLOWS];
 extern ModeType modes[MODE_AMOUNT];
+extern const uint16_t eeSize;
 
 void EE_setup();
-void EE_erase();

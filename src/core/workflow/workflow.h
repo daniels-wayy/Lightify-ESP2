@@ -9,16 +9,14 @@
 #include "core/eeprom/eeprom_ticker.h"
 
 extern Time now;
-extern bool isTimeReady;
-extern Timer workflowPowerOnTmr;
-extern Timer workflowPowerOffTmr;
-extern Timer workflowTickerTmr;
 extern Config cfg;
-extern Workflow workflows[MAX_WORKFLOWS];
+extern bool isTimeReady;
 extern WorkflowsService workflowsService;
+extern uint8_t dawnInitialBrightness, sunsetInitialBrightness;
+extern Timer workflowTimer, dawnTimer, sunsetTimer;
+extern Workflow* currentWorkflow;
 
-void workflowTicker();
-void checkWorkflowTimers();
+void checkWorkflow();
+uint32_t _calculateEstimatedTime(Workflow *workflow, bool isDawn);
 void stopWorkflowProcess();
-void checkWorkflowStart();
 bool isWorkflowRunning();

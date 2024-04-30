@@ -1,24 +1,22 @@
 #include "button_ticker.h"
 
-void buttonTicker() {
-    if (!cfg.useBtn) {
-        return;
-    }
+void buttonTicker(Button *btn) {
+    if (btn == nullptr) return;
 
     static bool holdFlag = 0, brDir = 0;
-    static Timer stepTmr(80);
+    static Timer stepTmr(60);
 
-    btn.tick();
+    btn->tick();
 
-    if (btn.isClick()) {
+    if (btn->isClick()) {
         _onSingleClick();
     }
-    if (cfg.power && btn.isHold()) {
+    if (cfg.power && btn->isHold()) {
         if (stepTmr.period()) {
             holdFlag = true;
             int temp = cfg.brightness;
-            temp += brDir ? 5 : -5;
-            temp = constrain(temp, 10, 255);
+            temp += brDir ? BRIGHTNESS_CHANGE_STEP : -BRIGHTNESS_CHANGE_STEP;
+            temp = constrain(temp, BRIGHTNESS_CHANGE_MIN, BRIGHTNESS_CHANGE_MAX);
             cfg.brightness = temp;
         }
     } else {
@@ -34,12 +32,6 @@ void buttonTicker() {
 
 void _onSingleClick() {
     cfg.power = !cfg.power;
-
-    if (cfg.brightness == 0) {
-        cfg.brightness = 10;
-    }
-
-    if (isWorkflowRunning()) {
-        stopWorkflowProcess();
-    }
+    if (cfg.brightness == 0) cfg.brightness = BRIGHTNESS_CHANGE_MIN;
+    if (isWorkflowRunning()) stopWorkflowProcess();
 }

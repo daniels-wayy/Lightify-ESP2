@@ -7,6 +7,7 @@
 #include "config.h"
 #include "data.h"
 #include "effects.h"
+#include "misc/helpers.h"
 
 extern LedService led;
 extern Config cfg;

@@ -5,7 +5,7 @@ LedEffects::LedEffects(LedService &strip, Config &cfg) : _strip(&strip), _cfg(&c
 void LedEffects::loadingEffect(CRGB color) {
     static int8_t dir = 1;
     static uint8_t val = MIN_LOAD_ANIM_BRI;
-    static Timer tmr(30);
+    static Timer tmr(20);
     if (tmr.period())
     {
         val += dir;
@@ -50,7 +50,7 @@ void LedEffects::fire(uint8_t scale) {
     counter += 20;
 }
 
-void LedEffects::setSmoothBrightness(uint8_t oldBri, uint8_t newBri) {
+void LedEffects::loopSmoothBrightness(uint8_t oldBri, uint8_t newBri) {
     if(oldBri == newBri) return;
     if (oldBri < newBri) {
         for (uint8_t i = oldBri; i < newBri; i++) {

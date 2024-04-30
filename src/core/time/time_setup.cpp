@@ -4,10 +4,8 @@ void setupTime() {
   ntp.setUpdateInterval(NTP_UPD_PRD * 60000ul / 2); 
   ntp.setTimeOffset((cfg.GMT) * 3600l);
   ntp.setPoolServerName(NTPserver);
-  if (WiFi.status() == WL_CONNECTED) { 
-    DEBUG(F("NTP Setup. Time zone: "));
-    DEBUGLN(cfg.GMT);
-    ntp.begin();
-    if (ntp.update()) isTimeReady = true;
-  }
+  DEBUG(F("NTP Setup. Time zone: "));
+  DEBUGLN(cfg.GMT);
+  ntp.begin();
+  if (ntp.update()) isTimeReady = true;
 }
