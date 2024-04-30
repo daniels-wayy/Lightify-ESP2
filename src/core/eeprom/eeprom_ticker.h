@@ -4,8 +4,10 @@
 #include "timer.h"
 #include "config.h"
 #include "data.h"
+#include "led.h"
 #include "misc/utils.h"
 
+extern LedService led;
 extern Config cfg;
 extern bool EECfgFlag;
 extern bool EEWorkflowsFlag;

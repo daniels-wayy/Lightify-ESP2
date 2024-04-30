@@ -37,6 +37,9 @@ void EE_updateCfgNow() {
     EEPROM.commit();
 }
 void EE_updateCfgRst() {
+    led.clear();
+    led.setBrightness(0);
+    led.update();
     EE_updateCfgNow();
     delay(100);
     ESP.restart();

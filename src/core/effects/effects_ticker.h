@@ -4,6 +4,7 @@
 #include "config.h"
 #include "timer.h"
 #include "led.h"
+#include "misc/helpers.h"
 
 extern LedService led;
 extern LedEffects effects;

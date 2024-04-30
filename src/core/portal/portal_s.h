@@ -4,7 +4,6 @@
 #include <mString.h>
 #include "config.h"
 #include "effects.h"
-#include "button.h"
 #include "mqtt.h"
 #include "data.h"
 #include "led.h"
@@ -14,9 +13,8 @@
 #include "core/workflow/workflow.h"
 
 extern Config cfg;
-extern GyverPortal portal;
+extern GyverPortal* portal;
 extern LedEffects effects;
-extern Button btn;
 extern MQTTService mqtt;
 extern LedService led;
 

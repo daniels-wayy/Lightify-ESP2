@@ -6,10 +6,9 @@
 #include "timer.h"
 #include "led.h"
 
-class OTAUpdater
-{
+class OTAUpdater {
 public:
-    OTAUpdater();
+    OTAUpdater(LedService& ledService);
     void update(
         char* url,
         std::function<void()> onStart,
@@ -21,6 +20,7 @@ public:
     void setOnFirmwareUpdateProgress(void (*callback)(uint8_t)) { _onFirmwareUpdateProgress = callback; }
     void setOnFirmwareUpdateFinished(void (*callback)(bool)) { _onFirmwareUpdateFinished = callback; }
 private:
+    LedService *_ledService;
     bool _isUpdating = false;
     void (*_onFirmwareUpdateStarted)() = nullptr;
     void (*_onFirmwareUpdateProgress)(uint8_t) = nullptr;

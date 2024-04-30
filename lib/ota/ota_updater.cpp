@@ -1,6 +1,6 @@
 #include "ota_updater.h"
 
-OTAUpdater::OTAUpdater() {}
+OTAUpdater::OTAUpdater(LedService &ledService) : _ledService(&ledService) {}
 
 void OTAUpdater::update(
     char *url,
@@ -10,6 +10,8 @@ void OTAUpdater::update(
     std::function<void(const char*)> onError
 ) {
     if (_isUpdating) return;
+
+    _isUpdating = true;
 
     ESPhttpUpdate.onStart([this, onStart]() {
         if (this->_onFirmwareUpdateStarted) this->_onFirmwareUpdateStarted();
@@ -37,6 +39,13 @@ void OTAUpdater::update(
         this->_isUpdating = false;
         onError(ESPhttpUpdate.getLastErrorString().c_str());
     });
+
+    _ledService->clear();
+    _ledService->setBrightness(50);
+    _ledService->fill(CRGB::FloralWhite);
+    _ledService->update();
+
+    delay(50);
 
     BearSSL::WiFiClientSecure UpdateClient;
 	UpdateClient.setInsecure();

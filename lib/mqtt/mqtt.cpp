@@ -40,16 +40,7 @@ void MQTTService::tick() {
 
 void MQTTService::reconnect() {
     if (!isConnected()) {
-        if (USE_SERIAL) {
-            Serial.println(F("MQTT dropped off. Reconnecting..."));
-        }
-        if (connect()) 
-            if (subscribe()) {
-                if (USE_SERIAL) {
-                    Serial.println(F("MQTT successfully connected."));
-                }
-            }
-
+        if (connect()) subscribe();
         delay(1200);
     }
 }
@@ -79,22 +70,21 @@ void MQTTService::_parsePacket() {
     else if (_inputBuffer.startsWith(WFL_DEL_CMD)) { _onRequestedWorkflowDelete(); }
     else if (_inputBuffer.startsWith(WFL_CLR_CMD)) { _onRequestedWorkflowsClear(); }
     else if (_inputBuffer.startsWith(STG_UPD_CMD)) { _onRequestedSettingsUpdate(); }
+    else if (_inputBuffer.startsWith(STG_RST_CMD)) { _onRequestedSettingsReset(); }
     else if (_inputBuffer.startsWith(FWR_UPD_CMD)) { _onRequestedFirmwareUpdate(); }
 }
 
 void MQTTService::_onRequestedPowerChange() {
     bool powerState = _inputBuffer.toInt(3);
     _cfg->power = powerState;
-    if (_cfg->brightness == 0) {
-        _cfg->brightness = 10;
-    }
+    if (_cfg->brightness == 0) _cfg->brightness = BRIGHTNESS_CHANGE_MIN;
     if (_EECfgUpdate) _EECfgUpdate();
     if (_onPowerChange) _onPowerChange(powerState);
 }
 
 void MQTTService::_onRequestedBrightnessChange() {
     uint8_t brightness = _inputBuffer.toInt(3);
-    uint8_t constrainedBrightness = constrain(brightness, 0, 255);
+    uint8_t constrainedBrightness = constrain(brightness, BRIGHTNESS_CHANGE_MIN, BRIGHTNESS_CHANGE_MAX);
     _cfg->brightness = constrainedBrightness;
     if (_EECfgUpdate) _EECfgUpdate();
     if (_onBrightnessChange) _onBrightnessChange(constrainedBrightness);
@@ -132,9 +122,9 @@ void MQTTService::_onRequestedEffectScaleChange() {
 }
 
 void MQTTService::_onRequestedWorkflowAdd() {
-    uint8_t _workflowData[10];
+    uint8_t _workflowData[20];
     _inputBuffer.remove(0, 5);
-    _inputBuffer.parse(_workflowData, 1, 10);
+    _inputBuffer.parse(_workflowData, 1, 20);
     _workflowsService->add(
         _workflowData[0],
         _workflowData[1],
@@ -148,9 +138,9 @@ void MQTTService::_onRequestedWorkflowAdd() {
 }
 
 void MQTTService::_onRequestedWorkflowUpdate() {
-    uint8_t _workflowData[10];
+    uint8_t _workflowData[20];
     _inputBuffer.remove(0, 5);
-    _inputBuffer.parse(_workflowData, 1, 10);
+    _inputBuffer.parse(_workflowData, 1, 20);
     _workflowsService->update(
         _workflowData[0],
         _workflowData[1],
@@ -179,18 +169,21 @@ void MQTTService::_onRequestedWorkflowsClear() {
 }
 
 void MQTTService::_onRequestedSettingsUpdate() {
-    uint16_t data[4];
+    uint16_t data[5];
     _inputBuffer.remove(0, 5);
-    _inputBuffer.parse(data, 2, 4);
+    _inputBuffer.parse(data, 2, 5);
     _cfg->port = data[0];
     _cfg->stripCurrent = (uint16_t)data[1];
     _cfg->ledCount = data[2];
     _cfg->GMT = data[3];
+    _cfg->usePortal = bool(data[4]);
     if (_EECfgUpdateRst) {
-        FastLED.clear();
-        FastLED.show();
         _EECfgUpdateRst();
     }
+}
+
+void MQTTService::_onRequestedSettingsReset() {
+    if (_onFactoryReset) _onFactoryReset();
 }
 
 void MQTTService::_onRequestedCurrentState() {
@@ -270,6 +263,8 @@ void MQTTService::_onRequestedSettingsState() {
     _outputBuffer += _cfg->ip[2];
     _outputBuffer += ",";
     _outputBuffer += _cfg->ip[3];
+    _outputBuffer += ",";
+    _outputBuffer += _cfg->usePortal;
     _mqtt.publish(_cfg->remote, _outputBuffer.buf);
 }
 
@@ -329,10 +324,6 @@ void MQTTService::_sendFirmwareUpdateFinished() {
 }
 
 void MQTTService::_sendFirmwareUpdateError(const char* errorMsg) {
-    if (USE_SERIAL) {
-        Serial.print(F("Firmware update error: "));
-        Serial.println(errorMsg);
-    }
     _outputBuffer.clear();
     _outputBuffer = MQTT_HEADER;
     _outputBuffer += FMW_UPDATE_STATUS_HEADER;

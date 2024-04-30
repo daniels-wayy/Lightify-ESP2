@@ -13,13 +13,13 @@ void WorkflowsService::add(
     uint8_t brightness
 ) {
     if (!isAbleToAdd()) return;
-    _workflows[_cfg->workflowsCount].id = id;
-    _workflows[_cfg->workflowsCount].isEnabled = isEnabled;
-    _workflows[_cfg->workflowsCount].day = day;
-    _workflows[_cfg->workflowsCount].hour = hour;
-    _workflows[_cfg->workflowsCount].minute = minute;
-    _workflows[_cfg->workflowsCount].duration = duration;
-    _workflows[_cfg->workflowsCount].brightness = brightness;
+    _workflows[_cfg->workflowsCount].id = constrain(id, 0, 255);
+    _workflows[_cfg->workflowsCount].isEnabled = constrain(isEnabled, 0, 1);
+    _workflows[_cfg->workflowsCount].day = constrain(day, 0, WORKFLOW_EVERYDAY_NUM);
+    _workflows[_cfg->workflowsCount].hour = constrain(hour, 0, 23);
+    _workflows[_cfg->workflowsCount].minute = constrain(minute, 0, 59);
+    _workflows[_cfg->workflowsCount].duration = constrain(duration, 0, WORKFLOW_MAX_DURATION);
+    _workflows[_cfg->workflowsCount].brightness = constrain(brightness, 0, 255);
     _cfg->workflowsCount++;
 }
 
@@ -32,33 +32,32 @@ void WorkflowsService::update(
     uint8_t duration,
     uint8_t brightness
 ) {
-    for (int i = 0; i < _cfg->workflowsCount; i++) {
+    for (int i = 0; i < MAX_WORKFLOWS; i++) {
         if (_workflows[i].id == id) {
-            _workflows[i].id = id;
-            _workflows[i].isEnabled = isEnabled;
-            _workflows[i].day = day;
-            _workflows[i].hour = hour;
-            _workflows[i].minute = minute;
-            _workflows[i].duration = duration;
-            _workflows[i].brightness = brightness;
+            _workflows[i].id = constrain(id, 0, 255);
+            _workflows[i].isEnabled = constrain(isEnabled, 0, 1);
+            _workflows[i].day = constrain(day, 0, WORKFLOW_EVERYDAY_NUM);
+            _workflows[i].hour = constrain(hour, 0, 23);
+            _workflows[i].minute = constrain(minute, 0, 59);
+            _workflows[i].duration = constrain(duration, 0, WORKFLOW_MAX_DURATION);
+            _workflows[i].brightness = constrain(brightness, 0, 255);
         }
     }
 }
 
 void WorkflowsService::del(uint8_t id) {
-    for (uint8_t i = 0; i < _cfg->workflowsCount; i++) {
+    uint8_t count = 0;
+    for (uint8_t i = 0; i < MAX_WORKFLOWS; i++) {
         if (_workflows[i].id == id) {
-            for (uint8_t j = i; j < _cfg->workflowsCount - 1; j++) {
-                _workflows[j] = _workflows[j + 1];
-            }
-            _cfg->workflowsCount--;
-            break;
+            _workflows[i] = Workflow();
         }
+        if (_workflows[i].id > 0) count++;
     }
+    _cfg->workflowsCount = count;
 }
 
 void WorkflowsService::clear() {
-    for (int i = 0; i < MAX_WORKFLOWS; i++) {
+    for (uint8_t i = 0; i < MAX_WORKFLOWS; i++) {
         _workflows[i] = Workflow();
     }
     _cfg->workflowsCount = 0;
@@ -74,27 +73,19 @@ bool WorkflowsService::isAbleToAdd() {
 
 Workflow *WorkflowsService::isWorkflow() {
     for (uint8_t i = 0; i < MAX_WORKFLOWS; i++) {
+        auto _workflow = &_workflows[i];
         // workflow has id and is enabled
-        if (_workflows[i].id > 0 && _workflows[i].isEnabled) {
-            if (
-                // if is everyday
-                _workflows[i].day == WORKFLOW_EVERYDAY_NUM || // or
-                // if the same day
-                _nowTime.day == _workflows[i].day || // or
-                // if every weekdays selected
-                (_workflows[i].day == WORKFLOW_EVERY_WEEKDAYS_NUM && _nowTime.day > 0 && _nowTime.day < 6) || // or
-                // if every weekends selected
-                (_workflows[i].day == WORKFLOW_EVERY_WEEKENDS_NUM && (_nowTime.day == 6 || _nowTime.day == 0))) {
+        if (_workflow->isUnique() && _workflow->isEnabled) {
+            if (_workflow->isMatchingDay(_nowTime.day)) {
+                // calculate minute
+                int desiredWorkflowMinute = _workflow->hour * 60 + _workflow->minute - _workflow->duration;
+                if (desiredWorkflowMinute < 0)
+                    desiredWorkflowMinute += 1440;
 
-                    // calculate minute
-                    int desiredWorkflowMinute = _workflows[i].hour * 60 + _workflows[i].minute - _workflows[i].duration;
-                    if (desiredWorkflowMinute < 0)
-                        desiredWorkflowMinute += 1440;
-
-                    // if found exact minute    
-                    if (desiredWorkflowMinute == (_nowTime.hour * 60 + _nowTime.min)) {
-                        return &_workflows[i];
-                    }
+                uint16_t nowMinute = _nowTime.hour * 60 + _nowTime.min;
+                if (desiredWorkflowMinute == nowMinute) { // found exact minute
+                    return _workflow;
+                }
             }
         }
     }

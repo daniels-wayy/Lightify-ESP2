@@ -8,8 +8,7 @@
 #include "core/eeprom/eeprom_ticker.h"
 #include "misc/utils.h"
 
-extern Button btn;
 extern Config cfg;
 
-void buttonTicker();
+void buttonTicker(Button *btn);
 void _onSingleClick();
