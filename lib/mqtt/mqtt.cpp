@@ -169,14 +169,17 @@ void MQTTService::_onRequestedWorkflowsClear() {
 }
 
 void MQTTService::_onRequestedSettingsUpdate() {
-    uint16_t data[5];
+    const uint8_t size = 7;
+    uint16_t data[size];
     _inputBuffer.remove(0, 5);
-    _inputBuffer.parse(data, 2, 5);
+    _inputBuffer.parse(data, 2, size);
     _cfg->port = data[0];
     _cfg->stripCurrent = (uint16_t)data[1];
     _cfg->ledCount = data[2];
     _cfg->GMT = data[3];
     _cfg->usePortal = bool(data[4]);
+    _cfg->btnPin = data[5];
+    _cfg->useBtn = bool(data[6]);
     if (_EECfgUpdateRst) {
         _EECfgUpdateRst();
     }
@@ -265,6 +268,10 @@ void MQTTService::_onRequestedSettingsState() {
     _outputBuffer += _cfg->ip[3];
     _outputBuffer += ",";
     _outputBuffer += _cfg->usePortal;
+    _outputBuffer += ",";
+    _outputBuffer += _cfg->useBtn;
+    _outputBuffer += ",";
+    _outputBuffer += _cfg->btnPin;
     _mqtt.publish(_cfg->remote, _outputBuffer.buf);
 }
 
