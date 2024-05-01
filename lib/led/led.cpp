@@ -5,7 +5,7 @@ LedService::LedService(Config &cfg) : _cfg(&cfg) {}
 void LedService::initialize() {
     _leds = new CRGB[_cfg->ledCount];
     delay(50);
-    FastLED.addLeds<WS2812B, DEVICE_CONFIG.ledPin, GRB>(_leds, _cfg->ledCount).setCorrection(TypicalLEDStrip);
+    FastLED.addLeds<WS2812B, STRIP_PIN, GRB>(_leds, _cfg->ledCount).setCorrection(TypicalLEDStrip);
     if (_cfg->stripCurrent > 0) {
         FastLED.setMaxPowerInVoltsAndMilliamps(STRIP_VOLT, _cfg->stripCurrent);
     }

@@ -15,8 +15,8 @@ struct Config
     char apPass[50] = "";
     uint16_t port = MQTT_PORT;
     uint8_t ip[4] = {0, 0, 0, 0};
-    uint8_t btnPin = DEVICE_CONFIG.btnPin;
-    bool useBtn = DEVICE_CONFIG.useBtn;
+    uint8_t btnPin = D5;
+    bool useBtn = 0;
     bool usePortal = 0;
     bool power = 1;
     uint8_t brightness = 50;
@@ -24,8 +24,8 @@ struct Config
     uint8_t colorSaturation = 255;
     uint8_t colorValue = 255;
     uint8_t fxIndex = 0;
-    uint16_t stripCurrent = DEVICE_CONFIG.stripCurrent;
-    uint16_t ledCount = DEVICE_CONFIG.ledCount;
+    uint16_t stripCurrent = STRIP_CURRENT_LIMIT;
+    uint16_t ledCount = DEFAULT_LED_COUNT;
     uint8_t GMT = NTP_GMT;
     uint8_t workflowsCount = 0;
 
@@ -36,8 +36,8 @@ struct Config
         host(MQTT_HOST),
         port(MQTT_PORT),
         ip{0, 0, 0, 0},
-        btnPin(DEVICE_CONFIG.btnPin),
-        useBtn(DEVICE_CONFIG.useBtn),
+        btnPin(D5),
+        useBtn(0),
         usePortal(0),
         power(1),
         brightness(50),
@@ -45,8 +45,8 @@ struct Config
         colorSaturation(255),
         colorValue(255),
         fxIndex(0),
-        stripCurrent(DEVICE_CONFIG.stripCurrent),
-        ledCount(DEVICE_CONFIG.ledCount),
+        stripCurrent(STRIP_CURRENT_LIMIT),
+        ledCount(DEFAULT_LED_COUNT),
         GMT(NTP_GMT),
         workflowsCount(0)
     {

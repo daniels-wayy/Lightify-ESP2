@@ -14,21 +14,31 @@ void smoothBrightness(uint8_t brightnessToChange) {
 void factoryReset() {
     Config newCfg;
 
+    // preserve wifi and AP
     strncpy(newCfg.ssid, cfg.ssid, sizeof(newCfg.ssid) - 1);
     strncpy(newCfg.pass, cfg.pass, sizeof(newCfg.pass) - 1);
-    strncpy(newCfg.host, cfg.host, sizeof(newCfg.host) - 1);
-    strncpy(newCfg.local, cfg.local, sizeof(newCfg.local) - 1);
-    strncpy(newCfg.remote, cfg.remote, sizeof(newCfg.remote) - 1);
     strncpy(newCfg.apName, cfg.apName, sizeof(newCfg.apName) - 1);
     strncpy(newCfg.apPass, cfg.apPass, sizeof(newCfg.apPass) - 1);
     newCfg.ssid[sizeof(newCfg.ssid) - 1] = '\0';
     newCfg.pass[sizeof(newCfg.pass) - 1] = '\0';
+    newCfg.apName[sizeof(newCfg.apName) - 1] = '\0';
+    newCfg.apPass[sizeof(newCfg.apPass) - 1] = '\0';
+
+    // preserve MQTT
+    strncpy(newCfg.host, cfg.host, sizeof(newCfg.host) - 1);
+    strncpy(newCfg.local, cfg.local, sizeof(newCfg.local) - 1);
+    strncpy(newCfg.remote, cfg.remote, sizeof(newCfg.remote) - 1);
     newCfg.host[sizeof(newCfg.host) - 1] = '\0';
     newCfg.local[sizeof(newCfg.local) - 1] = '\0';
     newCfg.remote[sizeof(newCfg.remote) - 1] = '\0';
-    newCfg.apName[sizeof(newCfg.apName) - 1] = '\0';
-    newCfg.apPass[sizeof(newCfg.apPass) - 1] = '\0';
     newCfg.port = cfg.port;
+
+    // preserve button
+    newCfg.useBtn = cfg.useBtn;
+    newCfg.btnPin = cfg.btnPin;
+
+    // preserve led
+    newCfg.ledCount = cfg.ledCount;
 
     delay(50);
     modesLocalReset();

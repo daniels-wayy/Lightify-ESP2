@@ -5,14 +5,17 @@
 #define LY_VERSION 2.4 // firmware version
 
 constexpr auto DEVICE_TYPE = debug;
-constexpr auto DEVICE_CONFIG = getConfig(DEVICE_TYPE);
+constexpr auto DEVICE_CONFIG = getNetworkConfig(DEVICE_TYPE);
 constexpr bool isDebugDevice(char *localTopic) {
-    return strncmp(localTopic, getConfig(debug).localTopic, 10) == 0;
+    return strncmp(localTopic, getNetworkConfig(debug).localTopic, 10) == 0;
 }
 
 // *** STRIP ***
+#define STRIP_PIN D7
 #define MAX_LEDS 400
 #define STRIP_VOLT 5
+#define STRIP_CURRENT_LIMIT 3000 // mAh
+#define DEFAULT_LED_COUNT 3 // can be adjusted later in the settings
 #define MAX_LOAD_ANIM_BRI 80 // strip - animation loading effect pulse max brightness
 #define MIN_LOAD_ANIM_BRI 20 // strip - animation loading effect pulse min brightness
 #define BRIGHTNESS_CHANGE_STEP 5
