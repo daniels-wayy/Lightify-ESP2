@@ -29,7 +29,6 @@ public:
     void sparkles(uint8_t scale);
     void rainbow(uint8_t scale);
     void fire(uint8_t scale);
-    void loopSmoothBrightness(uint8_t oldBri, uint8_t newBri);
 
 private:
     LedService *_strip;

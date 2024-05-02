@@ -50,25 +50,6 @@ void LedEffects::fire(uint8_t scale) {
     counter += 20;
 }
 
-void LedEffects::loopSmoothBrightness(uint8_t oldBri, uint8_t newBri) {
-    if(oldBri == newBri) return;
-    if (oldBri < newBri) {
-        for (uint8_t i = oldBri; i < newBri; i++) {
-            _strip->setBrightness(i >= 255 ? 255 : i);
-            _strip->update();
-        }
-    } else {
-        for (uint8_t i = oldBri; i > newBri; i--) {
-            _strip->setBrightness(i <= newBri ? newBri : i);
-            _strip->update();
-        }
-    }
-    if (newBri == 0) {
-        _strip->clear();
-        _strip->update();
-    }
-}
-
 CHSV LedEffects::_getFireColor(int val) {
     return CHSV(
         HUE_START + map(val, 0, 255, 0, _cfg->colorHue),                // H

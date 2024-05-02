@@ -45,7 +45,7 @@ void OTAUpdater::update(
     _ledService->fill(CRGB::FloralWhite);
     _ledService->update();
 
-    delay(50);
+    delay(100);
 
     BearSSL::WiFiClientSecure UpdateClient;
 	UpdateClient.setInsecure();

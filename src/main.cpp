@@ -21,7 +21,6 @@
 #include "core/portal/portal_s.h"
 #include "core/mqtt/mqtt_ticker.h"
 #include "core/led/led_ticker.h"
-#include "core/effects/effects_ticker.h"
 #include "core/eeprom/eeprom_ticker.h"
 #include "core/eeprom/eeprom_setup.h"
 #include "core/time/time_setup.h"
@@ -85,11 +84,11 @@ void setup() {
 
 void loop() {
   timeTicker();
+  yield();
   mqttTick();
   checkWorkflow();
   yield();
   workflowTick();
-  effectsTicker();
   ledTick();
   yield();
   EE_ticker();
@@ -97,6 +96,7 @@ void loop() {
   if (cfg.usePortal) {
     portal->tick();
     checkPortal();
-  }  
+  }
+  ESP.wdtFeed();
   yield();
 }
