@@ -2,7 +2,7 @@
 
 #include "device_type.h"
 
-#define LY_VERSION 2.4 // firmware version
+#define LY_VERSION 2.5 // firmware version
 
 constexpr auto DEVICE_TYPE = debug;
 constexpr auto DEVICE_CONFIG = getNetworkConfig(DEVICE_TYPE);
@@ -18,7 +18,7 @@ constexpr bool isDebugDevice(char *localTopic) {
 #define DEFAULT_LED_COUNT 3 // can be adjusted later in the settings
 #define MAX_LOAD_ANIM_BRI 80 // strip - animation loading effect pulse max brightness
 #define MIN_LOAD_ANIM_BRI 20 // strip - animation loading effect pulse min brightness
-#define BRIGHTNESS_CHANGE_STEP 5
+#define BRIGHTNESS_CHANGE_STEP 4
 #define BRIGHTNESS_CHANGE_MIN 10
 #define BRIGHTNESS_CHANGE_MAX 255
 

@@ -56,7 +56,11 @@ struct Config
     }
 
     inline CHSV currentColor() {
-        return CHSV(colorHue, colorSaturation, power ? colorValue : 0);
+        return CHSV(
+            colorHue,
+            colorSaturation,
+            power ? colorValue : 0
+        );
     }
 };
 

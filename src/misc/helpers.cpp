@@ -1,13 +1,12 @@
 #include "helpers.h"
 
-void smoothBrightness(uint8_t brightnessToChange) {
+void smoothBrightness(uint8_t brightnessToChange, uint8_t minBrightness) {
     if (led.getBrightness() != brightnessToChange) {
-        bool isBriUp = led.getBrightness() < brightnessToChange;
-        int8_t dir = isBriUp ? BRIGHTNESS_CHANGE_STEP : -BRIGHTNESS_CHANGE_STEP;
-        uint8_t briValue = constrain(led.getBrightness() + dir, BRIGHTNESS_CHANGE_MIN, BRIGHTNESS_CHANGE_MAX);
-        uint8_t newBri = isBriUp ? min(briValue, brightnessToChange) : max(brightnessToChange, briValue);
-        led.setBrightness(newBri);
-        if (newBri == 0) led.clear();
+        int8_t dir = led.getBrightness() < brightnessToChange ? BRIGHTNESS_CHANGE_STEP : -BRIGHTNESS_CHANGE_STEP;
+        uint8_t briValue = constrain(led.getBrightness() + dir, minBrightness, BRIGHTNESS_CHANGE_MAX);
+        led.setBrightness(briValue);
+        if (briValue == 0) led.clear();
+        yield();
     }
 }
 

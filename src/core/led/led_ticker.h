@@ -14,3 +14,5 @@ extern Config cfg;
 extern LedEffects effects;
 
 void ledTick();
+void _colorTick();
+void _effectsTick();
