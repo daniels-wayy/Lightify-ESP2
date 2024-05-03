@@ -59,7 +59,8 @@ struct Config
         return CHSV(
             colorHue,
             colorSaturation,
-            power ? colorValue : 0
+            colorValue
+            // power ? colorValue : 0
         );
     }
 };

@@ -77,9 +77,10 @@ void setup() {
   setupOTA();
   setupTime();
   randomSeed(micros());
-  led.setBrightness(cfg.brightness);
   startMQTT();
   checkPortalStart();
+  led.setBrightness(cfg.brightness);
+  led.update();
 }
 
 void loop() {

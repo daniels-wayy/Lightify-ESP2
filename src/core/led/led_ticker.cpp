@@ -1,37 +1,43 @@
 #include "led_ticker.h"
 
-#define UPD_PERIOD 10
+#define CLR_UPD_PERIOD 20U
+#define BRI_UPD_PERIOD 2U
 
 void ledTick() {
-    bool isFxRunning = cfg.fxIndex > 0;
-    if (isFxRunning) _effectsTick();
+    static uint32_t updTimer, briTimer;
 
-    static uint32_t updTimer;
-    if (millis() - updTimer >= UPD_PERIOD) {
+    // brightness and power timer
+    if (millis() - briTimer >= BRI_UPD_PERIOD) {
+        briTimer = millis();
+        if (smoothBrightness(cfg.power ? cfg.brightness : 0, 0)) {
+           led.update();
+           yield();
+        }
+    }
+
+    // color and effects timer 
+    if (millis() - updTimer >= (cfg.fxIndex > 0 ? modes[cfg.fxIndex].Speed : CLR_UPD_PERIOD)) {
         updTimer = millis();
-        if (!isFxRunning) _colorTick();
-        uint8_t thisBri = isFxRunning && !cfg.power ? 0 : cfg.brightness;
-        smoothBrightness(thisBri, 0);
-        led.update();
-        yield();
+        if (cfg.fxIndex > 0 ? _effectsTick() : _colorTick()) {
+            led.update();
+            yield();
+        }
     }
 }
 
-void _colorTick() {
+bool _colorTick() {
     CRGB ncol = cfg.currentColor();
     CRGB ccol = led.getLeds()[0];
     if (ccol != ncol) {
-        ccol = blend(ccol, ncol, 32);
+        ccol = blend(ccol, ncol, 17);
         led.fill(ccol);
-    }    
+        return true;
+    }
+    return false;
 }
 
-void _effectsTick() {
-    if (!cfg.power) return;
-
-    static uint32_t tmr;
-    if (!(millis() - tmr >= modes[cfg.fxIndex].Speed)) return;
-    tmr = millis();
+bool _effectsTick() {
+    if (!cfg.power) return false;
 
     switch (cfg.fxIndex) {
         case SPARKLES_INDEX:
@@ -46,4 +52,6 @@ void _effectsTick() {
         default:
             break;
     }
+
+    return true;
 }
