@@ -7,20 +7,20 @@
 #include "data.h"
 #include "config.h"
 
-#define SPARKLES_INDEX 1
-#define RAINBOW_INDEX 2
-#define FIRE_INDEX 3
+#define SPARKLES_INDEX 1U
+#define RAINBOW_INDEX 2U
+#define FIRE_INDEX 3U
 
 // Sparkles fx
 #define SPARKLES_COLOR CRGB::White
 
 // Fire fx
-#define MIN_SAT 245
-#define MAX_SAT 255
-#define MIN_BRIGHT 70
-#define MAX_BRIGHT 255
-#define FIRE_STEP 15
-#define HUE_START 0
+#define MIN_SAT 245U
+#define MAX_SAT 255U
+#define MIN_BRIGHT 70U
+#define MAX_BRIGHT 255U
+#define FIRE_STEP 15U
+#define HUE_START 0U
 
 class LedEffects {
 public:

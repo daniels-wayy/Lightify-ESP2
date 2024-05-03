@@ -20,6 +20,6 @@ extern LedService led;
 extern Workflow workflows[MAX_WORKFLOWS];
 extern const uint16_t eeSize;
 
-void smoothBrightness(uint8_t brightnessToChange = cfg.brightness, uint8_t minBrightness = BRIGHTNESS_CHANGE_MIN);
+bool smoothBrightness(uint8_t brightnessToChange = cfg.brightness, uint8_t minBrightness = BRIGHTNESS_CHANGE_MIN);
 void factoryReset();
 void modesLocalReset();

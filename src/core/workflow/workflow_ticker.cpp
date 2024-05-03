@@ -10,7 +10,7 @@ void workflowTick() {
         uint8_t brightness = isFinishedForBrightness ? currentWorkflow->brightness : timerBrightnessValue;
         DEBUG(F("Dawn brightness: ")); DEBUGLN(brightness);
 
-        cfg.brightness = brightness;
+        cfg.brightness = constrain(brightness, BRIGHTNESS_CHANGE_MIN, BRIGHTNESS_CHANGE_MAX);
 
         if (isFinishedForBrightness || dawnTimer.elapsed()) {
             currentWorkflow = nullptr;
@@ -26,10 +26,10 @@ void workflowTick() {
         uint8_t brightness = isFinishedForBrightness ? currentWorkflow->brightness : timerBrightnessValue;
         DEBUG(F("Sunset brightness: ")); DEBUGLN(brightness);
 
-        cfg.brightness = brightness;
+        cfg.brightness = constrain(brightness, BRIGHTNESS_CHANGE_MIN, BRIGHTNESS_CHANGE_MAX);
 
         if (isFinishedForBrightness || sunsetTimer.elapsed()) {
-            if (cfg.brightness == 0) cfg.power = false;
+            if (cfg.brightness <= BRIGHTNESS_CHANGE_MIN) cfg.power = false;
             currentWorkflow = nullptr;
             workflowTimer.stop();
             sunsetTimer.stop();

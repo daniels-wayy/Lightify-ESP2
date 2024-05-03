@@ -27,7 +27,7 @@ void checkWorkflow() {
                     if (estimatedTime <= 0) {
                         DEBUGLN(F("Zero duration workflow start"));
                         cfg.power = isDawn ? true : currentWorkflow->brightness <= 0 ? false : cfg.power;
-                        cfg.brightness = currentWorkflow->brightness;
+                        cfg.brightness = constrain(currentWorkflow->brightness, BRIGHTNESS_CHANGE_MIN, BRIGHTNESS_CHANGE_MAX);
                         currentWorkflow = nullptr;
                         EE_updateCfg();
                     } 
